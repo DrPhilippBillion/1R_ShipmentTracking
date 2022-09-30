@@ -1,5 +1,5 @@
 # 1R_ShipmentTracking
-This repository contains information on the requirements and implementation of the ONE Record shioment tracking API. It is basis for the Air Cargo industry commitment on ONE Record, Level 1 
+This repository contains information on the requirements and implementation of the ONE Record shipment tracking API. It is basis for the Air Cargo industry commitment on ONE Record, Level 1, which is presumably to be implemented in late 2023.
 
 ## Objective 
 The purpose of this document is to provide a guideline for implementing an open ONE Record API with the purpose of shipment-based tracking throughout the supply chain.
