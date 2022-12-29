@@ -1,205 +1,440 @@
 # ONE Record-based shipment tracking
 
+- [ONE Record-based shipment tracking](#one-record-based-shipment-tracking)
+  * [Basic Information on this document](#basic-information-on-this-document)
+    + [Objective](#objective)
+    + [Target audience](#target-audience)
+    + [Geographical coverage](#geographical-coverage)
+    + [Creators](#creators)
+    + [Continous development and availability](#continous-development-and-availability)
+    + [Use and reference](#use-and-reference)
+    + [Publication date, version and history](#publication-date--version-and-history)
+  * [Dependencies](#dependencies)
+    + [Standards applied](#standards-applied)
+    + [ONE Record Server Implementation used](#one-record-server-implementation-used)
+  * [Assumptions](#assumptions)
+  * [Solution approach](#solution-approach)
+  * [Piece-centricity and physics-orientation](#piece-centricity-and-physics-orientation)
+- [Data use](#data-use)
+  * [Request design](#request-design)
+  * [Response](#response)
+    + [Header](#header)
+    + [AWB data](#awb-data)
+    + [Shipment data](#shipment-data)
+    + [Piece linked to the shipment](#piece-linked-to-the-shipment)
+    + [TransportMovement of the piece](#transportmovement-of-the-piece)
+    + [Events](#events)
+      - [MAN](#man)
+      - [RCF](#rcf)
+- [API application](#api-application)
+  * [Required functions](#required-functions)
+  * [(additional remarks)](#-additional-remarks-)
+- [Additional comments / FAQs](#additional-comments---faqs)
+    + [tbd.](#tbd)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
+
+## Basic Information on this document
+
+### Objective 
+
+In 2022, major stakeholders of the supply chain decided to aim for a renewed data sharing infrastructure for the supply chain by 2026. This process was initiated and is moderated by the International Air Transportation Association (IATA). As a first step towards a holistics ONE Record-based eco-system, some parties agreed to implement an open shipment tracking API in 2023 (exact date tbd.). Thus, the purpose of this document is to provide a Good Practice for a shipment tracking API in the IATA ONE Record-based data eco-system for the supply chain. 
+
+The open tracking use case is not limited to carriers. As described below, there is also a place for data platform, shippers and many other stakeholders to apply this use case.
+
+### Target audience
+This document can be used by any party with the interest in the topic. 
+
+"Shipment" is defined as pieces under one contract, and not limited to the Master- or House-AWB. As ONE Record aims for multi-modality, this document should also find use in other modes of transportation beyond air freight only.
+
+### Geographical coverage
+As there are no legal or operational restrictions, the solution can be used world wide.
+
+### Creators
+This document is the outcome of the work of the "Joint ONE Record piloting and transition working group // technical part" at IATA. It was orchestrated by Arnaud Lambert of IATA as Secretary, with Philipp Billion of Lufthansa Cargo as Chairman. 
+
+Major contributions were made by:
+
+* Lufthansa Cargo, Dr. Philipp Billion
+* Lufthansa Industry Solutions, Dr. Daniel Döppner
+* Air Canada, Josh Priebe
+* Riege Software, Martin Skopp
+* DHL, Mary Stradling
+* Air France / KLM, Bilel Chakroun
+* GLS HKG, Keith Lam
+* Nexshore Technologies, Pramod Rao
+* British Telecom, Mark Belliss
+* Qatar Airways, Ajay Manoharan
+* Colog AG, Matthias Hurst
+* Martin Fowler
+
+A special thanks to Niclas Scheiber, Frankfurt University of applied sciences for preparing version 3.0 of the business ontology of ONE Record in coordination with the IATA ONE Record data model focus group.
+
+### Continous development and availability
+
+This document is to be used and continously developed, even if the current major stakeholders should move to other topics. Thus a "handover" of this document in Github is planned if responsibilities should shift.
+
+### Use and reference
+
+This Good Practice is free to access and use. If you use it, please refer to this document explicitly plus provide a link to the Github repository as source. This will ensure know-how-transfer and transparency.
+
+### Publication date, version and history
+
+Publication date, version and history should be provided by the Github version control system and not be duplicated here.
+
 ## Dependencies
 
 ### Standards applied
 
-The ONE Record business ontology version as of APR 13, 2022 was used [Working draft Ontology of 2022APR13](https://github.com/IATA-Cargo/ONE-Record/blob/bbe86e364b04d6a6279f0ab6e9ee47e1905ec9c4/working_draft/ontology/IATA-1R-DM-Ontology.ttl).
+The implementation of this business case is completely based on the IATA ONE Record standard: [Github Reposity for ONE Record](https://github.com/IATA-Cargo/ONE-Record).
 
-The ONE Record API and security specification draft witout a version as of APR 13, 2022 was used (no link available yet).
+The ONE Record business ontology version 3.0 as of #release_date was used [Working draft Ontology of v3.0](https://github.com/NiclasScheiber/1R-DM-working-files/tree/main/working).
+
+The ONE Record API and security specification draft witout a version as of #tobeUpdated APR 13, 2022 was used (no link available yet).
 
 ### ONE Record Server Implementation used
 
-(no ONE Record server implementation yet)
+Principally, this approach is server software agnostic. Any server software can be used that communicates according to the requirements of ONE Record. Still there are some open source implementations available. 
 
-### Other Software products used
+[Overview of software tools related to ONE Record by Daniel Döppner](https://github.com/ddoeppner/awesome-one-record)
 
 ## Assumptions
 
-One or more stakeholders of the supply chain are able to report progress in the transportation of shipments along the supply chain.
+Central assumptions:
 
-One or more stakeholders are interested in retrieving this information. The party requesting this information has an HouseAWB Number or a MasterAWB Number as unique ID for the shipment.
+- One or more stakeholders of the supply chain are able to report progress in the transportation of shipments along the supply chain.
 
-Both parties are using ONE Record as means of sharing information.
+- One or more stakeholders are interested in retrieving this information. The party requesting this information has one or more uniqueIDs (usually HouseAWB numbers or a MasterAWB numbers) for the shipment.
+
+- Both parties are using ONE Record as standard for information sharing.
 
 ## Solution approach
 
-This use case is covering the same content that is today provided by generic or cIMP/cXML-based messaging. It is covering the 
+Baseline for this use case is sharing the same tracking information shared today by FSUs in cIMP/cXML-based messaging. Additional information beyond these standards can be shared (like the FIW/FOW milestones that cannot be shared in cIMP). 
 
-Although the data is provided on shipment level, the ONE Record data model is piece-centric as a basic principle. This means, some milestones that are provided in the legacy environment on shipment level, are moved in a ONE Record environment on piece level. This applies, when the milestone has a relation with the piece in the physical world. For example, the milestone FOH reflects the handover of freight from the forwarder to the carrier. In the physical world, this usually happens by handing over pieces at the export acceptance of an airline. As piece-by-piece is handed over in reality, the status of each piece should switch to FOH. Below in #### you´ll find an attribution of milestones to data objects in the ONE Record data model.
+The solution should principally "open" to maximize the user´s benefits and minimize hurdles of implementation. This means that there a basic layer of information should be available for data consumers without authentication. Some stakeholders might still require technical features like API keys for technical management, hurdles should be kept as low as possible for the user.
 
-## Piece-centricity and 
+Although the base layer is as open as possible, additional, more sensitive information can be made available over the same API endpoints after an authentication. Thus, this use case is a good starting point for entering the ONE Record digital eco system.
 
-As most milestones are bound to the piece, this raises the question of how to deal with a piece-centric data model in an environment operating on shipment level, as it is usually the case today. If a party is not working on piece level yet, but on shipment level, it practically means that all pieces are labeled FOH the moment all pieces of a shipment are handed over. And this is exactly the mechanism to be applied if a party is not working on piece level. 
+## Piece-centricity and physics-orientation
 
-## Solution in current environment
+Today, tracking information is usually provided on shipment level, but the ONE Record data model is piece-centric as a basic principle. As a second principle, ONE Record is oriented towards reflecting the physical world. Thus, in ONE Record, e.g. not an abstract legal object like the AWB reaches a the departure milestone, but an aircraft on a transport movement with pieces loaded onto it. Through inheritance, the link between pieces and transport movement can be done. When all pieces of a shipment have departed, one could say, that the shipment has departed. For more information on the ONE Record data model approach please refer to the [IATA ONE Record implementation playbook](https://www.iata.org/en/programs/cargo/e/one-record/).
 
-In the legacy messaging environment, end to end CO2 emission tracking on piece level isn´t possible. Generic solutions for transparency on shipment level are in place, but don´t follow a standardized approach for different modes of transportation.
+This impacts the implementation in so far, as some milestones are linked to other objects in a ONE Record environment compared to the current legacy environment. 
 
-# Data use and target process
+The following table show the ONE Record reference and the legacy reference objects for the most common milestones:
 
-Climate relevant emissions are performed by a ***transportMeans*** on a ***transportMovement***, because a ***transportMeans*** does not produce emissions by itself (e.g. a plane that isn´t flying), the primary attribution of CO2-Emissions is linked with the ***transportMovement***. The ***transportMovement*** can be any movement of pieces, like a Truck leg, a flight, or even a forklift-movement. 
 
-While all climate data exchange around ***transportMeans*** and ***transportMovement*** serves for submitting the data basis for climate impact calculation between different stakeholders of the supply chain, the following climate impact data on piece level serves to fulfill the estimation of the actual impact of the transport on the climate.
+| Milestone   | ONE Record reference object  | Legacy reference object  |  Comment |
+|---|:-:|:-:|---|
+| BKD: booked on a specific flight  |  BookingOption | AWB  |   |
+| RCS: received from shipper or agent  |  Piece | AWB  |   |
+| MAN: manifested on a specific flight |  Piece | AWB  |   |
+| DEP: departed on a specific flight  | TransportMeans  | AWB  |   |
+| RCF: received from a given flight | Piece  | AWB  |   |
+| NFD: arrived at destination and the consignee or agent has been informed  |    Piece  |  AWB |   |
+| CCD: cleared by Customs  | Piece  | AWB  |   |
+| DLV: delivered to the consignee or agent |  Piece |  AWB |   |
+| DIS: with a discrepancy  | Piece  | AWB  |   |
+| FOH: Freight on Hand | Piece  | AWB / Piece Numbers  |   |
+  
+The impact of this "clean" approach is quite limited. The data consumer will still be able to make call on the preferred LogisticsObject, but get the results linked to the ONE Record reference object. The practical implementation is provided further down. 
 
 
+# Data use
 
-|   	|Physical object with climate impacting emissions|Climate impacting attributions on piece level|
-|---	|---	|---	|
-|Focus LOs  	|***transportMeans***, ***TransportMovement***, ***payloadDistance***|***piece***, ***climateEffect***|
-|Example|RFS Truck from AMS to CDG caused 12t  
-|Purpose|Provide basic data for climate impact calculation on piece level|Provide transparency on climate impact of transport on piece level|
-|Provider of data	|Operators (Airline, Trucking Company, etc.)|"Supply chain orchestrators" (can be airlines, forwarders, booking platforms)|
-|Target Group / Data consumers |"Supply chain orchestrators" (can be airlines, forwarders, booking platforms)|Shippers, end customers, etc.|
+As an assumption, all data is provided by a single data owner in the following example. In a more sophisticated setting, carrier, GHA, and/or other parties might provide milestones along the supply chain. In that case, only links to external systems will be provided, and additional calls will be required by the data consumer to follow the linked data.
 
-The following diagram shows the relevant data fields in the ONE Record data model:
+## Request design
 
-![DataModel](docs/dm2.svg) 
 
-## transportMovement LO
+The structure of URIs in ONE Record is left to the providing party with some limitating frame conditions. Many parties prefer tokenized URIs like
 
-The TransportMovement directly contains emission-relevant data: The ***distanceMeasured***, the ***distanceCalculated***, the ***fuelType***, the ***fuelAmountMeasured***, the ***fuelAmountCalculated*** and a link towards the correlating CO2-Emissions ***CO2Emissions*** (1:n link).
 
-### Data fields: distanceMeasured and distanceCalculated
+```http
+1r.logistics-data.com/organizations/speed-airline/los/a92eo
+```
 
-If available, the actually measured distance is provided in the ***distanceMeasured*** data field. Only if not available, the ***distanceCalculated*** data field should be populated.
+instead of class names or related information like
 
-### Data field: fuelType
 
-The ***fuelType*** data field should indicate the fuel that was consumed for this ***transportMovement***. "Kerosene", "SAF", "Renewable electric energy" are examples for possible values ***no standardized list, list by ISO expected; Moritz: standard-liste Referenz***. 
-1:n
-***Energy Carrier***
-***FeedStock***
-***FeedStockShare***
-Data exchange guidance Table 6 (Mail vom 29.4.2022)
+```http
+1r.logistics-data.com/organizations/speed-airline/los/transportMeans/D-ALFA
 
-### Data fields: fuelAmountMeasured and fuelAmountCalculated
+```
 
-If available, the actually measured fuel consumption is provided in the ***fuelAmountMeasured*** data field. Only if not available, the ***fuelAmountCalculated*** data field should be populated.
+as a basic structure. 
 
-### Data field: totalLoadedWeight
+In this case, the URI is structured with the following components:
 
-TBD: the total transportation weight is required for climate relevant emission monitoring. Question: How do we deal with this? 
+|  Component | Explanation  | Example  | Example explanation   |
+|---|:-:|:-:|---|
+| Top Level Domain  | Indicates the top level domain  | 1r.logistics-data.com   |  There is a data platform called "Logistics Data" with the Domain "logistics-data.com" in our example. The first part (often indicating the service) does not need to be 1r, can be chosen freely  |
+|  Data object class | Giving the top ontology level class context of the business and the API ontology for the following organization that owns the data  | organizations  |  For ONE Record, it must exist and be organizations |
+| License plate  | Indicates the owner of the data set further down the URI  | speed-forwarding  |  Name of the company owning the data hosted on the logistics data platform |
+| Superclass of provided object  | Giving the ontology context for the provided object. As practically all objects in ONE Record are LogisticsObjects, this is always LOs   | los  |  standard ontology reference |
+| Tokenized ID of Logistics Object | Tokenized ID of the Logistics object, does not neccessarily correllate with the type or a uniqueID of the object  | a92eo |  individual token of the object |
 
-Option 1: Assume shipments are not split, so it is the sum of all totalGrossWeighs of the Shipments. Pro: Realistic and exact, con: doesn´t work if shipments are split
+Both approaches are compliant with the current standard version. As an assumption for tokenized URIs, there is always an initial contact between data provider and data consumer in a ONE Record world. 
 
-Option 2: Sum the pieces on truck. Pro: easy to calculate; con: is not correct (total gross weight is usually higher with additional loading equipment), Piece info often missing
+This results in a specific problem for our use case here. For an "open" API, a previous contact with a subscription cannot be assumed. The data consumer has the uniqueID for his shipment request, he must be able to transmit it in his request, that is possibly the "first contact". If now he has to call a tokenized URI, he will run into the problem, that he doesn't know the token. The data provider on the other side cannot provide the tokenized URI, as the uniqueID is not known to him at that point in time.
+ 
+To solve this problem, for this specific use case, the URI for the get request should contain the AWB number as the uniqueID for the request. The following section demonstrated how this is to be implemented in practice.
 
-Option 3: create a new measured value totalLoadedWeight; most accurate, but also available?
+```http
+1r.logistics-data.com/organizations/speed-airline/los/awb-020-8377728
+```
 
-## payloadDistance LO
+Deviation from standard explained in detail:
 
-The ***payloadDistance*** LO describes the relevant factor for the climateImpact calculation on a truck.
+|  Component | Explanation  | Example  | Example explanation   |
+|---|:-:|:-:|---|
+| Class indicator | Indicates the class of logistics objects for the following uniqueID  | awb   |  hard coded for the application in air cargo, could be different for other modes of transportation
+| Separator | Separates the three components  | -  |  Separator between object name and awb prefix |
+| AWB prefix | provides the AWB prefix as part of the uniqueID of the AWB | 020  |  Example of LH Cargo's prefix
+| Separator | Separates the three components  | -  |  Separator between awb prefix and awb number |
+| AWB number | provides the AWB number as part of the uniqueID of the AWB | 8337728  |  random example
+
+
+## Response
+
+The following response serves as an example and will be explained step-by-step. It is a strongly simplified data set with a shipment with one piece only on one transport movement and two events:
+
+### Header
+
+```http
+{
+    "@id": "http://1r.logistics-data.com/organizations/speed-airline/
+    	los/d94de4ba?embedded=true",
+    "@type": [
+        "https://onerecord.iata.org/Waybill",
+        "https://onerecord.iata.org/LogisticsObject"
+    ],
+```
+The response first gives back the location of the requested object using @id. Here, the server respond with the tokenized form, but he could also use the more readable for of the request.
+
+The embedded-indicator shows the way the response is set up, with as much embedding as possible. Two important remarks on this:
+
+1. As an important constrain, only data by the same owner can be embedded, as otherwise the ownership control of another party would be violated.
+2. Even if data is embedded, a link for every logistics object must be created additionally, to enable essential ONE Record features like audit trail, pub/sub, access control, etc. for these objects.
+
+@type describes the ontology applied to these objects.
+ 
+### AWB data 
+
+After the header comes the Waybill data, as this is the primary entry point:
+
+```http
+"https://onerecord.iata.org/Waybill#waybillType": "Master",
+"https://onerecord.iata.org/Waybill#carrierDeclarationDate": {
+    "@type": "http://www.w3.org/2001/XMLSchema#dateTime",
+    "@value": "2022-12-01T00:00:00Z"
+},
+"https://onerecord.iata.org/Waybill#waybillNumber": "8377728",
+"https://onerecord.iata.org/Waybill#waybillPrefix": "020",
+"https://onerecord.iata.org/Waybill#carrierDeclarationSignature": "Max Smith",
+```
+
+### Shipment data
+
+In the data field *shipment*, the Waybill is linked to a shipment. A shipment in ONE Record is the totality of physical entities under one contract. The *totalGrossWeight* is a typical data field belonging in this object. In this case, it only contains the links to a piece.
+
+```http
+"https://onerecord.iata.org/Waybill#shipment": {
+    "@id": "http://1r.logistics-data.com/organizations/speed-airline/los/
+    	6fd367f1fdaf4ce9b69e956340c200a8?embedded=true",
+    "@type": [
+    "https://onerecord.iata.org/Shipment",
+    "https://onerecord.iata.org/LogisticsObject"
+],
+
+```
+### Piece linked to the shipment
+
+Here, the piece has volume, dimensions and special handling codes (GEN, SPX and EAP).
+
+
+```http
+"https://onerecord.iata.org/Shipment#containedPieces": [
+    {
+   "@id": "http://1r.logistics-data.com/organizations/speed-airline/
+   		los/d94de4ba?embedded=true",
+    "@type": [
+        "https://onerecord.iata.org/Piece",
+        "https://onerecord.iata.org/LogisticsObject"],
+    "https://onerecord.iata.org/Piece#dimensions": {
+        "@id": "_:1912794519",
+        "@type": ["https://onerecord.iata.org/Dimensions"],
+        "https://onerecord.iata.org/Dimensions#volume": {
+            "@id": "_:620425442",
+            "@type": [
+                "https://onerecord.iata.org/Value"],
+                "https://onerecord.iata.org/Value#value": 0.22361,
+                "https://onerecord.iata.org/Value#unit": "MTQ"
+                },
+            "https://onerecord.iata.org/Dimensions#height": {
+                "@id": "_:1880868295",
+                "@type": ["https://onerecord.iata.org/Value"],
+                "https://onerecord.iata.org/Value#value": 88.0,
+                "https://onerecord.iata.org/Value#unit": "CMT"
+                },
+            "https://onerecord.iata.org/Dimensions#length": {
+                "@id": "_:807894013",
+                "@type": ["https://onerecord.iata.org/Value"],
+                "https://onerecord.iata.org/Value#value": 33.0,
+                "https://onerecord.iata.org/Value#unit": "CMT"
+                },
+            "https://onerecord.iata.org/Dimensions#width": {
+                "@id": "_:1752661327",
+                "@type": ["https://onerecord.iata.org/Value"],
+                "https://onerecord.iata.org/Value#value": 77.0,
+                "https://onerecord.iata.org/Value#unit": "CMT"
+                }
+            },
+        "https://onerecord.iata.org/Piece#handlingInstructions": [
+            {
+            "@id": "_:36393723",
+            "@type": ["https://onerecord.iata.org/HandlingInstructions"],
+            "https://onerecord.iata.org/HandlingInstructions#serviceType": 
+				"SPH",
+            "https://onerecord.iata.org/HandlingInstructions#serviceDescription": 
+            	"E-FREIGHT CONSIGNMENT WITH ACCOMPANYING DOCUMENTS",
+            "https://onerecord.iata.org/HandlingInstructions#serviceTypeCode": 
+            	"EAP"
+             }
+        ]
+                
+```
+### TransportMovement of the piece
+
+The linked TransportMovement only contains origin and destination of the leg:
+
+```http
+"https://onerecord.iata.org/Piece#transportMovements": [
+ 	{
+ 	"@id": "http://1r.logistics-data.com/organizations/speed-airline/los/
+ 		170fcd042a894b16b8d85d14916b7619?embedded=true",
+	"@type": [
+		"https://onerecord.iata.org/TransportMovement",
+       "https://onerecord.iata.org/LogisticsObject"
+       	],
+    "https://onerecord.iata.org/TransportMovement#departureLocation": {
+    	"@id": "_:1093851795",
+      	"@type": ["https://onerecord.iata.org/Location"],
+		"https://onerecord.iata.org/Location#code": "FRA"
+		},
+	"https://onerecord.iata.org/TransportMovement#arrivalLocation": {
+		"@id": "_:956103849",
+		"@type": ["https://onerecord.iata.org/Location"],
+		"https://onerecord.iata.org/Location#code": "JFK"
+		}
+```
+### Events
+
+As you can see, the events do not have independent links, but are provided in the following way:
+
+```http
+http://1r.logistics-data.com/organizations/speed-airline/los/170fcd042a894b16b8d85d14916b7619/events/070bfcc011194fb2b54d181067e875e7
+```
+Explanation in detail:
+
+|  Component | Explanation  | Example  | Example explanation   |
+|---|:-:|:-:|---|
+| Referring object | represents the object the event is linked to  | 1r.logistics-data.com/organizations/speed-airline/los/170fcd042a894b16b8d85d14916b7619   |  represents a piece here
+| Class of referred object | provides the class of the "attached" object | events  |  
+| tokenized event id | provides the individual token for one event | 070bfcc011194fb2b54d181067e875e7  |  
+
+
+OPEN ISSUE: LINK OR EMBEDD EVENTS??
+
+#### MAN
+
+```http
+"https://onerecord.iata.org/LogisticsObject#events": [
+{
+	"@id": "http://1r.logistics-data.com/organizations/speed-airline/los/170fcd04
+		2a894b16b8d85d14916b7619/events/070bfcc011194fb2b54d181067e875e7",
+	"@type": ["https://onerecord.iata.org/Event"],
+	"https://onerecord.iata.org/Event#eventName": "Consignment manifested on a specific flight",
+	"https://onerecord.iata.org/Event#location": {
+		"@id": "_:896881601",
+		"@type": ["https://onerecord.iata.org/Location"],
+			"https://onerecord.iata.org/Location#code": "FRA"
+		},
+	"https://onerecord.iata.org/Event#eventCode": "MAN",
+	"https://onerecord.iata.org/Event#eventTypeIndicator": "actual",
+	"https://onerecord.iata.org/Event#linkedObject": {
+		"@id": "http://1r.logistics-data.com/organizations/speed-airline/los/
+			170fcd042a894b16b8d85d14916b7619?embedded=true",
+		"@type": [
+			"https://onerecord.iata.org/TransportMovement",
+			"https://onerecord.iata.org/LogisticsObject"]
+		},	
+	"https://onerecord.iata.org/Event#dateTime": {
+		"@type": "http://www.w3.org/2001/XMLSchema#dateTime",
+		"@value": "2022-12-01T15:03:00Z"
+       }
+  }
+                       
+                          
+```
+
+#### RCF
+
+```http
+{
+	"@id": "http://1r.logistics-data.com/organizations/speed-airline/los/170fcd
+		042a894b16b8d85d14916b7619/events/070bfcc011fsa4fb2b54d181067e875e7",
+	"@type": ["https://onerecord.iata.org/Event"],
+	"https://onerecord.iata.org/Event#eventName": "Consignment received from a given flight",
+	"https://onerecord.iata.org/Event#location": {
+		"@id": "_:1382884449",
+		"@type": ["https://onerecord.iata.org/Location"],
+		"https://onerecord.iata.org/Location#code": "JFK"
+			},
+	"https://onerecord.iata.org/Event#eventCode": "RCF",
+	"https://onerecord.iata.org/Event#eventTypeIndicator": "Scheduled",
+	"https://onerecord.iata.org/Event#linkedObject": {
+		"@id": "http://1r.logistics-data.com/organizations/speed-airline/los/
+			d94de4ba?embedded=true",
+		"@type": [
+			"https://onerecord.iata.org/Piece",
+			"https://onerecord.iata.org/LogisticsObject"]
+		},
+	"https://onerecord.iata.org/Event#dateTime": {
+		"@type": "http://www.w3.org/2001/XMLSchema#dateTime",
+		"@value": "2022-12-02T11:20:00Z"
+		}
+	}
+```
+
+# API application
+
+## Required functions
+The open tracking use case is an easy starting point for a ONE Record transition. As it doesn`t directly include the conclusion of a contract and can usually be considered as "one way communication", not all technical ONE Record features must be used.
+
+The following technical features are required on the data provider side:
+
+- Implemented basic requests: GET, POST
+- Generating and managing links for linked data
+- Support publish and subscribe
+
+Not neccessarily required are
+
+- Processing external change requests
+- Providing an audit trail
+- Supporting access delegation
+
+On the data consumer side, even less functions are required for pure data consumption from the open tracking API:
+
+- Making basic GET request
+- Retrieving data from linked data sources 
+ 
+
+## (additional remarks)
+
+# Additional comments / FAQs
+
+### tbd.
 
-### Data field: payloadDistanceResult (value)
-
-The payloadDistanceResult is a most relevant parameter for the estimation of the climate impact of this transportMovement. It is usually calculated by multiplying the weight and the distance of the transportMovement. Possible units are kilogram-kilometre ("kgkm"), tonne-kilometre ("tkm"), kilometre-tonne ("kmt") and "ton-mile", which is in the US: 1 ton-mile * ( 0.907185 t / short ton) * ( 1.609344 km / mile ) = 1.460 tkm.
-
-### ISOTransparencyLevel (int)
-
-This parameter shows the level of parameters to be included. 
-
-TBD here, e.g. is there a level including the deadhead legs? Etc.
-
-### FuelConsumptionParameter
-
-This indicator can be either "measured" or "calculated". It describes the calculation basis for the calculation result, and not the data basis, which can be found in the the ***fuelAmountMeasured*** and ***fuelAmountCalculated*** of the transportMovement (TBD: Obsolete due to the ISO Levels bringing clear indicators here?).
-
-### DistanceParameter
-
-This indicator can be either "measured" or "calculated". It describes the calculation basis for the calculation result, and not the data basis, which can be found in the the ***distanceMeasured*** and ***distanceCalculated*** of the transportMovement (TBD: Obsolete due to the ISO Levels bringing clear indicators here?)
-
-### CO2CoefficiencyFactor
-
-**tbd** required?
-
-### Other data fields
-
-Other data fields like ***departureLocation*** and ***arrivalLocation*** could be used to verify the CO2-Emission relevant data sources. Additionally, relevant information could be added as an ***externalReference***, if only available as PDF. This could also be used for an image or a GPS-track of the geo-locational movement to provide an additional layer of information.
-
-The ***movementType*** has a special relevance here, as it indicates wether this is a planned transport movement or an already  performed one.
-
-## transportMeans LO
-
-The ***transportMeans*** describes the means of transportation used to perfom for the linked transportMovement. Classical examples are a truck that performs a road leg for a transportation from the forwarder´s hub to the carrier´s origin airport, or a Boeing 777 freighter to perform a flight from Frankfurt to Rio de Janeiro. 
-
-### Data field: typicalFuelConsumption
-
-The ***typicalFuelConsumption*** describes an average amount of fuel for a defined distance, e.g. 12 l / 100 km. This does not include the type of fuel, as one of the assumptions is that the consumption doesn´t depend on the type of fuel. When using this, the ***unit*** data field is quite extensively used, with a content like "l/100km".
-
-### Data field: typicalCO2Coefficient
-
-The ***typicalCO2Coefficient*** describes ??? required?
-
-### Data field: 
-
-## piece LO
-
-The Piece is the central unit of the ONE Record data model, and thus climate impact should be calculated and published on this level. If no detailed piece information is available, the total gross weight of the shipment is evenly distributed amoungst the pieces of the shipment. The total number of pieces should also be known. If the weights of individual pieces are known, they must be taken into account.
-
-
-### Data field: grossWeight
-
-The data field ***grossWeight*** within the piece LO describes the weight of the piece, and thus is to be used for the impact calculation
-
-### Data field: skeletonBy
-
-The data field ***skeletonBy*** aims for providing information, if and by whom a piece skeleton was created. Skeleton pieces are placeholders, if the owning party does not provide piece information (usually the Shipper). In that case, the totalGrossWeight of the shipment is evently distributed over the number of pieces, and thus pieces skeletons are created with a generic UPID. If the field is filled with content, piece skeletons were created, if left blank, piece information is available. Piece skeletons can be created by any party. Once piece skeletons are used, they are to be used along the supply chain for any piece-level purpose, instead of creating new piece skeletons by downflow parties.
-
-
-## ClimateEffect LO
-
-The ***climateEffect*** LO is the Logistics Object documenting the effective climate impact of the transportation of the piece. Each stakeholder should quantify the effect for his own part of the transportation chain, meaning the carrier should provide information for all legs under the MAWB contract, including flight legs, RFS, etc., the forwarder should provide all transportation legs under his control (usually the HAWB), including the carriers legs, etc. To clearly indicate these "embedded" emissions, a climateEffect can contain "embedded" climateEffects.
-
-### Data field: CO2equivalentWTW
-
-**tbd**
-
-### Data field: CO2equivalentTTW
-
-**tbd**
-
-### Data field: MethodName
-
-This field contains the name of the method applied.
-
-### Data field: MethodVersion
-
-This field contains the version of the method calculation, if available.
-
-### Data field: MethodLink
-
-This data field contains a URL to more details on the calculation method applied.
-
-### Data field: Verification
-
-**tbd**
-
-### Data field: Accreditation
-
-**tbd**
-
-### Data field: TransportActivity
-
-### Data field:  includedClimateEffects
-
-This data field contains linked climateEffect calculation of embedded transport activites (see remarks above) 
-
-
-# API use
-
-### Technical setting
-
-### Basic API-Features used
-
-## Results / Summary
-
-## Additional comments / FAQs
-
-### How do we deal with missing piece information?
-
-Principally, the ONE Record data model is based on the piece. Thus the ***climateImpact*** LO is linked to the piece, never the shipment. Thus we seem to have a problem, if e.g. the weights of each piece are missing, as this is a relevant factor for climate Impact calculation. 
-
-But even if *detailed* piece information are not available, the number of pieces is usually available. In that case, the ***totalGrossWeight*** of the shipment is divided over the number of pieces. Meaning that it is assumed that all pieces have the same weight. This procedure is called the "use of piece skeletons". But this approach is only to be applied, if there´s no piece information available. If piece information are available, they must be taken into account for the climate impact calculation.
-
-If a consumer wants to consume the ***climateImpact*** on shipment level, it is required to sum up the ***climateImpact*** of all pieces within the shipment. Providing the climate impact on shipment level is not possible within ONE Record.
