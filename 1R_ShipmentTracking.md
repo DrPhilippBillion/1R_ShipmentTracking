@@ -434,7 +434,8 @@ On the data consumer side, even less functions are required for pure data consum
 
 ## (additional remarks)
 
-# Additional comments / FAQs
+# tbd.
 
-### tbd.
+# Open issues
 
+## Redirection rules for platforms
