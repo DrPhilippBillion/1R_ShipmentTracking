@@ -439,3 +439,5 @@ On the data consumer side, even less functions are required for pure data consum
 # Open issues
 
 ## Redirection rules for platforms
+
+## Effective date
