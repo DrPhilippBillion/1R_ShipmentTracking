@@ -1,5 +1,7 @@
 # ONE Record-based shipment tracking
 
+Table of contents:
+
 - [ONE Record-based shipment tracking](#one-record-based-shipment-tracking)
   * [Basic Information on this document](#basic-information-on-this-document)
     + [Objective](#objective)
@@ -31,9 +33,6 @@
   * [(additional remarks)](#-additional-remarks-)
 - [Additional comments / FAQs](#additional-comments---faqs)
     + [tbd.](#tbd)
-
-<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
-
 
 ## Basic Information on this document
 
@@ -335,7 +334,8 @@ The linked TransportMovement only contains origin and destination of the leg:
 As you can see, the events do not have independent links, but are provided in the following way:
 
 ```http
-http://1r.logistics-data.com/organizations/speed-airline/los/170fcd042a894b16b8d85d14916b7619/events/070bfcc011194fb2b54d181067e875e7
+http://1r.logistics-data.com/organizations/speed-airline/los/
+	170fcd042a894b16b8d85d14916b7619/events/070bfcc011194fb2b54d181067e875e7
 ```
 Explanation in detail:
 
