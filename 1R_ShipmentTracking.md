@@ -161,7 +161,11 @@ Link to all events connected with the LO:
 {AUTHORITY}/organizations/{organizationID}/los/{loID}/events
 ```
 
-Link to a specific event connected with the LO: {AUTHORITY}/organizations/{organizationID}/los/{loID}/events/{eventID}
+Link to a specific event connected with the 
+
+```http
+LO: {AUTHORITY}/organizations/{organizationID}/los/{loID}/events/{eventID}
+```
 
 Many parties prefer tokenized loIDs like
 
