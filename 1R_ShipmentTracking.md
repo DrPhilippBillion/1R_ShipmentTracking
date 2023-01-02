@@ -150,7 +150,9 @@ As an assumption, all data is provided by a single data owner in the following e
 The basic structure of ONE Record URIs is as follows:
 
 Link to the LO: {AUTHORITY}/organizations/{organizationID}/los/{loID}
+
 Link to all events connected with the LO: {AUTHORITY}/organizations/{organizationID}/los/{loID}/events
+
 Link to a specific event connected with the LO: {AUTHORITY}/organizations/{organizationID}/los/{loID}/events/{eventID}
 
 Many parties prefer tokenized loIDs like
