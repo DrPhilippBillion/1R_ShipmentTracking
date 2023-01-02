@@ -2,39 +2,45 @@
 This repository contains information on the requirements and implementation of the ONE Record shipment tracking API. It is basis for the Air Cargo industry commitment on ONE Record, Level 1, which is presumably to be implemented in late 2023.
 
 This README-file contains meta-information on the repository, while the requirements and implementation material can be found in 1R_ShipmentTracking.md.
+### Objective 
 
-## Objective 
-The purpose of this document is to provide a guideline for implementing an open ONE Record API with the purpose of shipment-based tracking throughout the supply chain.
+In 2022, major stakeholders of the supply chain decided to aim for a renewed data sharing infrastructure for the supply chain by 2026. This process was initiated and is moderated by the International Air Transportation Association (IATA). As a first step towards a holistics ONE Record-based eco-system, some parties agreed to implement an open shipment tracking API in 2023 (exact date tbd.). Thus, the purpose of this document is to provide a Good Practice for a shipment tracking API in the IATA ONE Record-based data eco-system for the supply chain. 
 
-## Target audience
-This document can be used by any party. The functionality of shipment tracking can be provided by carriers, forwarders, data platforms and/or any other stakeholder of the ONE Record ecosystem. 
+The open tracking use case is not limited to carriers. As described below, there is also a place for data platform, shippers and many other stakeholders to apply this use case.
 
-## Geographical coverage
+### Target audience
+This document can be used by any party with the interest in the topic. 
+
+"Shipment" is defined as pieces under one contract, and not limited to the Master- or House-AWB. As ONE Record aims for multi-modality, this document should also find use in other modes of transportation beyond air freight only.
+
+### Geographical coverage
 As there are no legal or operational restrictions, the solution can be used world wide.
 
-## Creators
-This document is the outcome of the air cargo community orchestration at IATA. It was organized as a  Parties/Persons involved were:
+### Creators
+This document is the outcome of the work of the "Joint ONE Record piloting and transition working group // technical part" at IATA. It was orchestrated by Arnaud Lambert of IATA as Secretary, with Philipp Billion of Lufthansa Cargo as Chairman. 
 
-Lufthansa Cargo, Dr. Philipp Billion (in lead)
+Major contributions were made by:
 
-Lufthansa Industry Solutions, Dr. Daniel A. Döppner
+* Lufthansa Cargo, Dr. Philipp Billion
+* Lufthansa Industry Solutions, Dr. Daniel A. Döppner
+* Air Canada, Josh Priebe
+* Riege Software, Martin Skopp
+* IATA, Arnaud Lambert
+* DHL, Mary Stradling
+* Air France / KLM, Bilel Chakroun
+* GLS HKG, Keith Lam
+* Nexshore Technologies, Pramod Rao
+* British Telecom, Mark Belliss
+* Qatar Airways, Ajay Manoharan
+* Colog AG, Matthias Hurst
+* MDF Solutions, Martin Fowler
 
-IATA, Arnaud Lambert
+A special thanks to Niclas Scheiber, Frankfurt University of applied sciences for preparing version 3.0 of the business ontology of ONE Record in coordination with the IATA ONE Record data model focus group.
 
-Riege Software, Martin Skopp
+### Continous development and availability
 
-Air Canada, Josh Priebe
+This document is to be used and continously developed, even if the current major stakeholders should move to other topics. Thus a "handover" of this document in Github is planned if responsibilities should shift.
 
-Cathay Pacific, Keith Lam
+### Use and reference
 
-## Continous development and availability
-
-This document is to be used and continously developed.
-
-## Use and reference
-
-This Good Practice is free to access and use. Please mention the use of this document and provide a link to the Github repository as a source.
-
-### Publication date, version and history
-
-Publication date, version and history should be provided by the Github version control system and not be duplicated here.
+This Good Practice is free to access and use. If you use it, please refer to this document explicitly plus provide a link to the Github repository as source. This will ensure know-how-transfer and transparency.
