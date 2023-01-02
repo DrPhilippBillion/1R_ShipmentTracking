@@ -56,9 +56,10 @@ This document is the outcome of the work of the "Joint ONE Record piloting and t
 Major contributions were made by:
 
 * Lufthansa Cargo, Dr. Philipp Billion
-* Lufthansa Industry Solutions, Dr. Daniel Döppner
+* Lufthansa Industry Solutions, Dr. Daniel A. Döppner
 * Air Canada, Josh Priebe
 * Riege Software, Martin Skopp
+* IATA, Arnaud Lambert
 * DHL, Mary Stradling
 * Air France / KLM, Bilel Chakroun
 * GLS HKG, Keith Lam
@@ -66,7 +67,7 @@ Major contributions were made by:
 * British Telecom, Mark Belliss
 * Qatar Airways, Ajay Manoharan
 * Colog AG, Matthias Hurst
-* Martin Fowler
+* MDF Solutions, Martin Fowler
 
 A special thanks to Niclas Scheiber, Frankfurt University of applied sciences for preparing version 3.0 of the business ontology of ONE Record in coordination with the IATA ONE Record data model focus group.
 
@@ -140,16 +141,19 @@ The following table show the ONE Record reference and the legacy reference objec
   
 The impact of this "clean" approach is quite limited. The data consumer will still be able to make call on the preferred LogisticsObject, but get the results linked to the ONE Record reference object. The practical implementation is provided further down. 
 
-
 # Data use
 
 As an assumption, all data is provided by a single data owner in the following example. In a more sophisticated setting, carrier, GHA, and/or other parties might provide milestones along the supply chain. In that case, only links to external systems will be provided, and additional calls will be required by the data consumer to follow the linked data.
 
 ## Request design
 
+The basic structure of ONE Record URIs is as follows:
 
-The structure of URIs in ONE Record is left to the providing party with some limitating frame conditions. Many parties prefer tokenized URIs like
+Link to the LO: {AUTHORITY}/organizations/{organizationID}/los/{loID}
+Link to all events connected with the LO: {AUTHORITY}/organizations/{organizationID}/los/{loID}/events
+Link to a specific event connected with the LO: {AUTHORITY}/organizations/{organizationID}/los/{loID}/events/{eventID}
 
+Many parties prefer tokenized loIDs like
 
 ```http
 1r.logistics-data.com/organizations/speed-airline/los/a92eo
@@ -211,6 +215,7 @@ The following response serves as an example and will be explained step-by-step. 
         "https://onerecord.iata.org/LogisticsObject"
     ],
 ```
+
 The response first gives back the location of the requested object using @id. Here, the server respond with the tokenized form, but he could also use the more readable for of the request.
 
 The embedded-indicator shows the way the response is set up, with as much embedding as possible. Two important remarks on this:
@@ -331,7 +336,9 @@ The linked TransportMovement only contains origin and destination of the leg:
 ```
 ### Events
 
-As you can see, the events do not have independent links, but are provided in the following way:
+WORK OVER THIS WITH LINKS!!!!
+
+Like any other objects, events have links and :
 
 ```http
 http://1r.logistics-data.com/organizations/speed-airline/los/
@@ -344,9 +351,6 @@ Explanation in detail:
 | Referring object | represents the object the event is linked to  | 1r.logistics-data.com/organizations/speed-airline/los/170fcd042a894b16b8d85d14916b7619   |  represents a piece here
 | Class of referred object | provides the class of the "attached" object | events  |  
 | tokenized event id | provides the individual token for one event | 070bfcc011194fb2b54d181067e875e7  |  
-
-
-OPEN ISSUE: LINK OR EMBEDD EVENTS??
 
 #### MAN
 
