@@ -149,23 +149,31 @@ As an assumption, all data is provided by a single data owner in the following e
 
 The basic structure of ONE Record URIs is as follows:
 
-Link to the LO: {AUTHORITY}/organizations/{organizationID}/los/{loID}
+Link to the LO: 
 
-Link to all events connected with the LO: {AUTHORITY}/organizations/{organizationID}/los/{loID}/events
+```http
+{AUTHORITY}/organizations/{organizationID}/los/{loID}
+```
+
+Link to all events connected with the LO: 
+
+```http
+{AUTHORITY}/organizations/{organizationID}/los/{loID}/events
+```
 
 Link to a specific event connected with the LO: {AUTHORITY}/organizations/{organizationID}/los/{loID}/events/{eventID}
 
 Many parties prefer tokenized loIDs like
 
 ```http
-1r.logistics-data.com/organizations/speed-airline/los/a92eo
+http://1r.logistics-data.com/organizations/speed-airline/los/a92eo
 ```
 
 instead of class names or related information like
 
 
 ```http
-1r.logistics-data.com/organizations/speed-airline/los/transportMeans/D-ALFA
+http://1r.logistics-data.com/organizations/speed-airline/los/transportMeans/D-ALFA
 
 ```
 
@@ -188,7 +196,7 @@ This results in a specific problem for our use case here. For an "open" API, a p
 To solve this problem, for this specific use case, the URI for the get request should contain the AWB number as the uniqueID for the request. The following section demonstrated how this is to be implemented in practice.
 
 ```http
-1r.logistics-data.com/organizations/speed-airline/los/awb-020-8377728
+http://1r.logistics-data.com/organizations/speed-airline/los/awb-020-8377728
 ```
 
 Deviation from standard explained in detail:
