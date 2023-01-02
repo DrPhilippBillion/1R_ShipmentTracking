@@ -1,17 +1,18 @@
 # 1R_ShipmentTracking
 This repository contains information on the requirements and implementation of the ONE Record shipment tracking API. It is basis for the Air Cargo industry commitment on ONE Record, Level 1, which is presumably to be implemented in late 2023.
 
-This README-file contains meta-information on the repository, while the requirements and implementation material can be found in 1R_ShipmentTracking.md.
+This README-file contains meta-information on the repository, while the requirements and implementation material can be found in the file
+
+**1R_ShipmentTracking.md**
+
 ### Objective 
 
 In 2022, major stakeholders of the supply chain decided to aim for a renewed data sharing infrastructure for the supply chain by 2026. This process was initiated and is moderated by the International Air Transportation Association (IATA). As a first step towards a holistics ONE Record-based eco-system, some parties agreed to implement an open shipment tracking API in 2023 (exact date tbd.). Thus, the purpose of this document is to provide a Good Practice for a shipment tracking API in the IATA ONE Record-based data eco-system for the supply chain. 
 
-The open tracking use case is not limited to carriers. As described below, there is also a place for data platform, shippers and many other stakeholders to apply this use case.
+"Shipment" is defined as pieces under one contract, and not limited to the Master- or House-AWB. As ONE Record aims for multi-modality, this document should also find use in other modes of transportation beyond air freight only.
 
 ### Target audience
 This document can be used by any party with the interest in the topic. 
-
-"Shipment" is defined as pieces under one contract, and not limited to the Master- or House-AWB. As ONE Record aims for multi-modality, this document should also find use in other modes of transportation beyond air freight only.
 
 ### Geographical coverage
 As there are no legal or operational restrictions, the solution can be used world wide.
