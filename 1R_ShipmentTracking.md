@@ -450,7 +450,9 @@ On the data consumer side, even less functions are required for pure data consum
 - Retrieving data from linked data sources 
  
 
-## (additional remarks)
+## Authentication approach
+
+- no central authentication for this first use case
 
 # tbd.
 
