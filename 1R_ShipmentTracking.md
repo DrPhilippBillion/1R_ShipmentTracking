@@ -213,6 +213,22 @@ Deviation from standard explained in detail:
 | Separator | Separates the three components  | -  |  Separator between awb prefix and awb number |
 | AWB number | provides the AWB number as part of the uniqueID of the AWB | 8337728  |  random example
 
+This special use case can also result in an additional requirement. Given the scenarion, that a tracking platform offers unified tracking in a hetereogenous ONE Record / non ONE Record environment. Some carriers are using ONE Record, for other does the platform provide the tracking data. As the second case is described above, we´ll focus on the first case:
+
+A customer would make a call on the platform for an airline, that is running a ONE Record tracking server according to the requirements. The request would look like the following:
+
+```http
+http://1r.logistics-data.com/organizations/speed-airline/los/awb-020-8377728
+```
+
+In this case, the platform would need to re-direct the request directly to the airline´s ONE Record server, by answering with an HTTP/1.1 302 re-direct:
+
+```http
+HTTP/1.1 302 Found
+Location: https://1r.speed-airline.com/companies/speed-airline/los/awb-020-837772
+```
+
+This mechanism enables e.g. a platform to provide a unified ONE Record tracking API in a hetereougenous environment, where single stakeholders are providing data in ONE Record format, and others don´t.
 
 ## Response
 
@@ -452,7 +468,7 @@ On the data consumer side, even less functions are required for pure data consum
 
 ## Authentication approach
 
-- no central authentication for this first use case
+- For this use case authentication is left over to the implementing party. Generally, –
 
 # tbd.
 
