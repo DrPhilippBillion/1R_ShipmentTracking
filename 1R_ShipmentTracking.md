@@ -468,12 +468,8 @@ On the data consumer side, even less functions are required for pure data consum
 
 ## Authentication approach
 
-- For this use case authentication is left over to the implementing party. Generally, –
-
-# tbd.
-
-# Open issues
-
-## Redirection rules for platforms
+For this use case, the authentication approach and implementation is left over to the implementing party. As of the nature of the "open" tracking API, authentication might not be required at all.
 
 ## Effective date
+
+The effective date of the commitment for implementing this Open Tracking API is to be defined.
