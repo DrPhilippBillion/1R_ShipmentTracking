@@ -366,29 +366,15 @@ The linked TransportMovement only contains origin and destination of the leg:
 ```
 ### Events
 
-WORK OVER THIS WITH LINKS!!!!
-
-Like any other objects, events have links and :
-
-```http
-http://1r.logistics-data.com/organizations/speed-airline/los/
-	170fcd042a894b16b8d85d14916b7619/events/070bfcc011194fb2b54d181067e875e7
-```
-Explanation in detail:
-
-|  Component | Explanation  | Example  | Example explanation   |
-|---|:-:|:-:|---|
-| Referring object | represents the object the event is linked to  | 1r.logistics-data.com/organizations/speed-airline/los/170fcd042a894b16b8d85d14916b7619   |  represents a piece here
-| Class of referred object | provides the class of the "attached" object | events  |  
-| tokenized event id | provides the individual token for one event | 070bfcc011194fb2b54d181067e875e7  |  
+Like any other objects, events have links and are linked, and thus are used in the following way:
 
 #### MAN
 
 ```http
 "https://onerecord.iata.org/LogisticsObject#events": [
 {
-	"@id": "http://1r.logistics-data.com/organizations/speed-airline/los/170fcd04
-		2a894b16b8d85d14916b7619/events/070bfcc011194fb2b54d181067e875e7",
+	"@id": "http://1r.logistics-data.com/organizations/speed-airline/los/
+		/070bfcc011194fb2b54d181067e875e7",
 	"@type": ["https://onerecord.iata.org/Event"],
 	"https://onerecord.iata.org/Event#eventName": "Consignment manifested on a specific flight",
 	"https://onerecord.iata.org/Event#location": {
@@ -418,8 +404,8 @@ Explanation in detail:
 
 ```http
 {
-	"@id": "http://1r.logistics-data.com/organizations/speed-airline/los/170fcd
-		042a894b16b8d85d14916b7619/events/070bfcc011fsa4fb2b54d181067e875e7",
+	"@id": "http://1r.logistics-data.com/organizations/speed-airline/los/
+		070bfcc011fsa4fb2b54d181067e875e7",
 	"@type": ["https://onerecord.iata.org/Event"],
 	"https://onerecord.iata.org/Event#eventName": "Consignment received from a given flight",
 	"https://onerecord.iata.org/Event#location": {
