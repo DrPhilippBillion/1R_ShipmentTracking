@@ -161,25 +161,25 @@ https://1r.example.com/logistics-objects/1a8ded38-1804-467c-a369-81a411416b7c
 
 Example of a URI for all logistics events linked with the logistics object: 
 
-```http
+```
 https://1r.example.com/logistics-objects/1a8ded38-1804-467c-a369-81a411416b7c/logistics-events
 ```
 
 Example of a URI for a specific event linked with the logistics object: 
 
-```http
+```
 https://1r.example.com/logistics-objects/1a8ded38-1804-467c-a369-81a411416b7c/logistics-events/f2512fd
 ```
 
 The URI can either be tokenized like
 
-```http
+```
 https://1r.example.com/logistics-objects/1a8ded38-1804-467c-a369-81a411416b7c
 ```
 
 or using class names like
 
-```http
+```
 https://1r.example.com/logistics-objects/transport-means-D-ALFA
 
 ```
@@ -222,7 +222,7 @@ Accept: application/ld+json
 Response:
 
 ```http
-307 Temporary Redirect
+HTTP/1.1 307 Temporary Redirect
 Location: https://1r.example.com/logistics-object/1a8ded38-1804-467c-a369-81a411416b7c
 ```
 
@@ -315,7 +315,7 @@ The *Shipment#totalGrossWeight* is a typical data field belonging in this object
 Here, the piece has volume, dimensions and special handling codes (GEN, SPX and EAP).
 
 
-```http
+```json
 "https://onerecord.iata.org/Shipment#containedPieces": [
     {
    "@id": "https://1r.example.com/logistics-objects/
@@ -370,7 +370,7 @@ Here, the piece has volume, dimensions and special handling codes (GEN, SPX and 
 
 The linked TransportMovement only contains origin and destination of the leg:
 
-```http
+```json
 "https://onerecord.iata.org/Piece#transportMovements": [
  	{
  	"@id": "https://1r.example.com/logistics-objects/los/
@@ -396,7 +396,7 @@ Like any other objects, events have links and are linked, and thus are used in t
 
 #### MAN
 
-```http
+```json
 "https://onerecord.iata.org/LogisticsObject#events": [
 {
 	"@id": "https://1r.example.com/logistics-objects/los/
@@ -428,7 +428,7 @@ Like any other objects, events have links and are linked, and thus are used in t
 
 #### RCF
 
-```http
+```json
 {
 	"@id": "https://1r.example.com/logistics-objects/los/
 		070bfcc011fsa4fb2b54d181067e875e7",
@@ -462,7 +462,9 @@ The mechanis as described above reflects the requirements of a single carrier or
 A typical request in this case could look like this:
 
 ```http
-https://1r.example.com/logistics-objects/awb-020-8377728
+GET /logistics-objects/awb-020-8377728 HTTP/1.1
+Host: 1r.example.com
+Accept: application/ld+json
 ```
 
 Here, instead of providing the tracking data, the platform would need to re-direct the request to the airline´s ONE Record server. According to the HTTP standard, this could be done by answering with an HTTP/1.1 302 re-direct:
@@ -500,7 +502,8 @@ On the data consumer side, even less functions are required for pure data consum
 
 # Authentication approach
 
-For this use case, the authentication approach and implementation is left over to the implementing party. As of the nature of the "open" tracking API, authentication might not be required at all.
+For this use case, the authentication approach and implementation is left over to the implementing party. 
+As of the nature of the "open" tracking API, authentication might not be required at all.
 
 # Effective date
 
