@@ -188,24 +188,12 @@ https://1r.example.com/logistics-objects/transportMeans/D-ALFA
 
 as a basic structure. 
 
-For our use case, the URI is structured with the following components:
-
-|  Component | Explanation  | Example  | Example explanation   |
-|---|:-:|:-:|---|
-| Top Level Domain  | Indicates the top level domain  | 1r.logistics-data.com   |  There is a data platform called "Logistics Data" with the Domain "logistics-data.com" in our example. The first part (often indicating the service) does not need to be 1r, can be chosen freely  |
-|  Data object class | Giving the top ontology level class context of the business and the API ontology for the following organization that owns the data  | organizations  |  For ONE Record, it must exist and be organizations |
-| License plate  | Indicates the owner of the data set further down the URI  | speed-forwarding  |  Name of the company owning the data hosted on the logistics data platform |
-| Superclass of provided object  | Giving the ontology context for the provided object. As practically all objects in ONE Record are LogisticsObjects, this is always LOs   | los  |  standard ontology reference |
-| Tokenized ID of Logistics Object | Tokenized ID of the Logistics object, does not neccessarily correllate with the type or a uniqueID of the object  | a92eo |  individual token of the object |
-
-Both approaches are compliant with the current standard version. As an assumption for tokenized URIs, there is always an initial contact between data provider and data consumer in a ONE Record world. 
-
-This results in a specific problem for our use case here. For an "open" API, a previous contact with a subscription cannot be assumed. The data consumer has the uniqueID for his shipment request, he must be able to transmit it in his request, that is possibly the "first contact". If now he has to call a tokenized URI, he will run into the problem, that he doesn't know the token. The data provider on the other side cannot provide the tokenized URI, as the uniqueID is not known to him at that point in time.
+Both approaches are compliant with the current standard version. As an assumption for tokenized URIs, there is always an initial contact between data provider and data consumer in a ONE Record world. This results in a specific problem for our use case here. For an "open" API, a previous contact with a subscription cannot be assumed. The data consumer has the uniqueID for his shipment request, he must be able to transmit it in his request, that is possibly the "first contact". If now he has to call a tokenized URI, he will run into the problem, that he doesn't know the token. The data provider on the other side cannot provide the tokenized URI, as the uniqueID is not known to him at that point in time.
  
 To solve this problem, for this specific use case, the URI for the get request should contain the AWB number as the uniqueID for the request. The following section demonstrated how this is to be implemented in practice.
 
 ```http
-http://1r.logistics-data.com/organizations/speed-airline/los/awb-020-8377728
+https://1r.example.com/logistics-objects/los/awb-020-8377728
 ```
 
 Deviation from standard explained in detail:
@@ -217,23 +205,6 @@ Deviation from standard explained in detail:
 | AWB prefix | provides the AWB prefix as part of the uniqueID of the AWB | 020  |  Example of LH Cargo's prefix
 | Separator | Separates the three components  | -  |  Separator between awb prefix and awb number |
 | AWB number | provides the AWB number as part of the uniqueID of the AWB | 8337728  |  random example
-
-This special use case can also result in an additional requirement. Given the scenarion, that a tracking platform offers unified tracking in a hetereogenous ONE Record / non ONE Record environment. Some carriers are using ONE Record, for other does the platform provide the tracking data. As the second case is described above, we´ll focus on the first case:
-
-A customer would make a call on the platform for an airline, that is running a ONE Record tracking server according to the requirements. The request would look like the following:
-
-```http
-http://1r.logistics-data.com/organizations/speed-airline/los/awb-020-8377728
-```
-
-In this case, the platform would need to re-direct the request directly to the airline´s ONE Record server, by answering with an HTTP/1.1 302 re-direct:
-
-```http
-HTTP/1.1 302 Found
-Location: https://1r.speed-airline.com/companies/speed-airline/los/awb-020-837772
-```
-
-This mechanism enables e.g. a platform to provide a unified ONE Record tracking API in a hetereougenous environment, where single stakeholders are providing data in ONE Record format, and others don´t.
 
 ## Response
 
@@ -433,6 +404,26 @@ Like any other objects, events have links and are linked, and thus are used in t
 		}
 	}
 ```
+
+## Special Case: Multi-Carrier tracking platform
+
+The mechanis as described above reflects the requirements of a single carrier or forwarder platform providing tracking data for themselfes or other stakeholders that are not using ONE Record. Beyond that, there is a scenario where a tracking platform might want to offer a unified tracking mechanism in a hetereogenous ONE Record / non ONE Record environment. All is covered by the mechanis as descibed above, except for the case the platform gets a call for an AWB number for a carrier that is providing data in ONE Record. 
+
+A typical request in this case could look like this:
+
+```http
+https://1r.example.com/logistics-objects/awb-020-8377728
+```
+
+Here, instead of providing the tracking data, the platform would need to re-direct the request to the airline´s ONE Record server. According to the HTTP standard, this could be done by answering with an HTTP/1.1 302 re-direct:
+
+```http
+HTTP/1.1 302 Found
+Location: https://1r.carrier.com/logistics-objects/awb-020-837772
+```
+
+This mechanism enables e.g. a platform to provide a unified ONE Record tracking API in a hetereougenous environment, where single stakeholders are providing data in ONE Record format, and others don´t.
+
 
 # API application
 
