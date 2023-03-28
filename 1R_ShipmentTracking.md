@@ -67,7 +67,7 @@ Major contributions were made by:
 * Colog AG, Matthias Hurst
 * MDF Solutions, Martin Fowler
 
-A special thanks to Niclas Scheiber, Frankfurt University of applied sciences for preparing version 3.0 of the business ontology of ONE Record in coordination with the IATA ONE Record data model focus group.
+A special thanks to Niclas Scheiber, Frankfurt University of Applied Sciences for preparing version 3.0 of the business ontology of ONE Record in coordination with the IATA ONE Record data model focus group.
 
 ### Continous development and availability
 
@@ -147,51 +147,54 @@ As an assumption, all data is provided by a single data owner in the following e
 
 The basic structure of ONE Record URIs is quite open. Examples can be found in the current API specification draft (https://ddoeppner.github.io/ONE-Record/).
 
-Examples of a basic URI for an LO: 
+Examples of a basic URI for a logistics object: 
 
-```http
-https://1r.example.com/logistics-objects/flights/LH870/2023-11-20
+```
+https://1r.example.com/logistics-objects/flight-LH870-2023-11-20
 ```
 
 or
 
-```http
+```
 https://1r.example.com/logistics-objects/1a8ded38-1804-467c-a369-81a411416b7c
 ```
 
-Example of a URI for all events connected with the LO: 
+Example of a URI for all logistics events linked with the logistics object: 
 
 ```http
-https://1r.example.com/logistics-objects/1a8ded38-1804-467c-a369-81a411416b7c/events
+https://1r.example.com/logistics-objects/1a8ded38-1804-467c-a369-81a411416b7c/logistics-events
 ```
 
-Example of a URI for a specific events connected with the LO: 
+Example of a URI for a specific event linked with the logistics object: 
 
 ```http
-https://1r.example.com/logistics-objects/1a8ded38-1804-467c-a369-81a411416b7c/events/f2512fd
+https://1r.example.com/logistics-objects/1a8ded38-1804-467c-a369-81a411416b7c/logistics-events/f2512fd
 ```
 
 The URI can either be tokenized like
 
 ```http
-https://1r.example.com/logistics-objects/1a8ded38-1804-467c-a369-81a411416b7c/events
+https://1r.example.com/logistics-objects/1a8ded38-1804-467c-a369-81a411416b7c
 ```
 
 or using class names like
 
 ```http
-https://1r.example.com/logistics-objects/transportMeans/D-ALFA
+https://1r.example.com/logistics-objects/transport-means-D-ALFA
 
 ```
 
 as a basic structure. 
 
-Both approaches are compliant with the current standard version. As an assumption for tokenized URIs, there is always an initial contact between data provider and data consumer in a ONE Record world. This results in a specific problem for our use case here. For an "open" API, a previous contact with a subscription cannot be assumed. The data consumer has the uniqueID for his shipment request, he must be able to transmit it in his request, that is possibly the "first contact". If now he has to call a tokenized URI, he will run into the problem, that he doesn't know the token. The data provider on the other side cannot provide the tokenized URI, as the uniqueID is not known to him at that point in time.
+Both approaches are compliant with the current ONE Record specification. For tokenized URIs, it is assumed that there is always a first contact between data provider and data consumer in a ONE Record world. This results in a specific problem for the given use case. For an "open" API, a previous contact with a subscription cannot be assumed. For the "first contact", the data consumer requires the unique tokenized ID for a shipment to request the data from the data owner. However, at this point the tokenized URI is not yet known or communicated. The data provider on the other side cannot provide the tokenized URI because the data consumer is unknown due to the assumption of an "open API".
  
-To solve this problem, for this specific use case, the URI for the get request should contain the AWB number as the uniqueID for the request. The following section demonstrated how this is to be implemented in practice.
+To solve this problem, for this specific use case, the URI for the GET request should contain the AWB number as the uniqueID for the request. 
+The following section describes a reference implementation.
 
 ```http
-https://1r.example.com/logistics-objects/los/awb-020-8377728
+GET logistics-objects/awb-020-8377728 HTTP/1.1
+Host: 1r.example.com
+Accept: application/ld+json
 ```
 
 Deviation from standard explained in detail:
@@ -204,58 +207,107 @@ Deviation from standard explained in detail:
 | Separator | Separates the three components  | -  |  Separator between awb prefix and awb number |
 | AWB number | provides the AWB number as part of the uniqueID of the AWB | 8337728  |  random example
 
-## Response
+## Example workflow
 
-The following response serves as an example and will be explained step-by-step. It is a strongly simplified data set with a shipment with one piece only on one transport movement and two events:
+The following response serves as an example and will be explained step-by-step. 
+It is a strongly simplified data set with a shipment with one piece only on one transport movement and two events:
 
-### Header
-
+Request:
 ```http
-{
-    "@id": "https://1r.example.com/logistics-objects/
-    	los/d94de4ba?embedded=true",
-    "@type": [
-        "https://onerecord.iata.org/Waybill",
-        "https://onerecord.iata.org/LogisticsObject"
-    ],
+GET logistics-objects/awb-020-8377728 HTTP/1.1
+Host: 1r.example.com
+Accept: application/ld+json
 ```
 
-The response first gives back the location of the requested object using @id. Here, the server respond with the tokenized form, but he could also use the more readable for of the request.
+Response:
 
-The embedded-indicator shows the way the response is set up, with as much embedding as possible. Two important remarks on this:
+```http
+307 Temporary Redirect
+Location: https://1r.example.com/logistics-object/1a8ded38-1804-467c-a369-81a411416b7c
+```
 
-1. As an important constrain, only data by the same owner can be embedded, as otherwise the ownership control of another party would be violated.
+The response contains the actual location of the requested object using the Location http header. 
+The client then has retrieved the unique tokenized ID of the Waybill and can get them by requesting the actual URI.
+
+Request:
+```http
+GET logistics-objects/1a8ded38-1804-467c-a369-81a411416b7c HTTP/1.1
+Host: 1r.example.com
+Accept: application/ld+json
+```
+
+Response:
+```bash
+HTTP/1.1 200 OK
+Content-Type: application/ld+json
+Content-Language: en-US
+Location: https://1r.example.com/logistics-objects/1a8ded38-1804-467c-a369-81a411416b7c
+Type: https://onerecord.iata.org/Waybill
+Revision: 1
+Latest-Revision: 1
+
+{
+   "@id":"https://1r.example.com/logistics-objects/1a8ded38-1804-467c-a369-81a411416b7c",
+   "@type":[
+      "https://onerecord.iata.org/Waybill",
+      "https://onerecord.iata.org/LogisticsObject"
+   ],
+   "https://onerecord.iata.org/Waybill#waybillType":"Master",
+   "https://onerecord.iata.org/Waybill#carrierDeclarationDate": {
+      "@type":"http://www.w3.org/2001/XMLSchema#dateTime",
+      "@value":"2022-12-01T00:00:00Z"
+   },
+   "https://onerecord.iata.org/Waybill#waybillNumber":"8377728",
+   "https://onerecord.iata.org/Waybill#waybillPrefix":"020",
+   "https://onerecord.iata.org/Waybill#carrierDeclarationSignature":"Max Smith"
+   "https://onerecord.iata.org/Waybill#shipment": {
+      "@type": "https://onerecord.iata.org/Shipment",
+      "@id": "https://1r.example.com/logistics-objects/8a76ed85-959e-45d5-8c42-5fd39c08efb1"
+   },
+}
+```
+*This is a linked data version of the Waybill*
+
+A client can also request an embedded version of the Waybil using the `embedded` query parameter, , e.g.
+```http
+GET logistics-objects/1a8ded38-1804-467c-a369-81a411416b7c?embedded=true HTTP/1.1
+Host: 1r.example.com
+Accept: application/ld+json
+```
+
+Two important remarks on this:
+
+1. Only data hosted on the same ONE Record server can be embedded, as otherwise the ownership control of another party would be violated.
 2. Even if data is embedded, a link for every logistics object must be created additionally, to enable essential ONE Record features like audit trail, pub/sub, access control, etc. for these objects.
 
-@type describes the ontology applied to these objects.
- 
-### AWB data 
-
-After the header comes the Waybill data, as this is the primary entry point:
-
-```http
-"https://onerecord.iata.org/Waybill#waybillType": "Master",
-"https://onerecord.iata.org/Waybill#carrierDeclarationDate": {
-    "@type": "http://www.w3.org/2001/XMLSchema#dateTime",
-    "@value": "2022-12-01T00:00:00Z"
-},
-"https://onerecord.iata.org/Waybill#waybillNumber": "8377728",
-"https://onerecord.iata.org/Waybill#waybillPrefix": "020",
-"https://onerecord.iata.org/Waybill#carrierDeclarationSignature": "Max Smith",
-```
 
 ### Shipment data
 
-In the data field *shipment*, the Waybill is linked to a shipment. A shipment in ONE Record is the totality of physical entities under one contract. The *totalGrossWeight* is a typical data field belonging in this object. In this case, it only contains the links to a piece.
+The data field *Waybill#shipment* contains a link to a shipment. 
+A shipment in ONE Record is the totality of physical entities under one contract. 
+The *Shipment#totalGrossWeight* is a typical data field belonging in this object. 
 
-```http
-"https://onerecord.iata.org/Waybill#shipment": {
-    "@id": "https://1r.example.com/logistics-objects/los/
-    	6fd367f1fdaf4ce9b69e956340c200a8?embedded=true",
-    "@type": [
-    "https://onerecord.iata.org/Shipment",
-    "https://onerecord.iata.org/LogisticsObject"
-],
+```json
+{
+   "@id":"https://1r.example.com/logistics-objects/1a8ded38-1804-467c-a369-81a411416b7c",
+   "@type":[
+      "https://onerecord.iata.org/Waybill",
+      "https://onerecord.iata.org/LogisticsObject"
+   ],
+   "https://onerecord.iata.org/Waybill#waybillType":"Master",
+   "https://onerecord.iata.org/Waybill#carrierDeclarationDate": {
+      "@type":"http://www.w3.org/2001/XMLSchema#dateTime",
+      "@value":"2022-12-01T00:00:00Z"
+   },
+   "https://onerecord.iata.org/Waybill#waybillNumber":"8377728",
+   "https://onerecord.iata.org/Waybill#waybillPrefix":"020",
+   "https://onerecord.iata.org/Waybill#carrierDeclarationSignature":"Max Smith"
+   "https://onerecord.iata.org/Waybill#shipment": {
+      "@type": "https://onerecord.iata.org/Shipment",
+      "@id": "https://1r.example.com/logistics-objects/8a76ed85-959e-45d5-8c42-5fd39c08efb1"
+   },
+}
+```
 
 ```
 ### Piece linked to the shipment
@@ -416,7 +468,7 @@ https://1r.example.com/logistics-objects/awb-020-8377728
 Here, instead of providing the tracking data, the platform would need to re-direct the request to the airline´s ONE Record server. According to the HTTP standard, this could be done by answering with an HTTP/1.1 302 re-direct:
 
 ```http
-HTTP/1.1 302 Found
+HTTP/1.1 307 Temporary Redirect
 Location: https://1r.carrier.com/logistics-objects/awb-020-837772
 ```
 
