@@ -1,4 +1,5 @@
 # ONE Record-based shipment tracking
+
 - [ONE Record-based shipment tracking](#one-record-based-shipment-tracking)
   * [Basic Information on this document](#basic-information-on-this-document)
     + [Objective](#objective)
@@ -28,8 +29,8 @@
   * [Special Case: Multi-Carrier tracking platform](#special-case--multi-carrier-tracking-platform)
 - [API application](#api-application)
   * [Required functions](#required-functions)
-  * [Authentication approach](#authentication-approach)
-  * [Effective date](#effective-date)
+- [Authentication approach](#authentication-approach)
+- [Effective date](#effective-date)
 
 ## Basic Information on this document
 
