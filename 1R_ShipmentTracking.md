@@ -212,7 +212,7 @@ The following response serves as an example and will be explained step-by-step. 
 
 ```http
 {
-    "@id": "http://1r.logistics-data.com/organizations/speed-airline/
+    "@id": "https://1r.example.com/logistics-objects/
     	los/d94de4ba?embedded=true",
     "@type": [
         "https://onerecord.iata.org/Waybill",
@@ -250,7 +250,7 @@ In the data field *shipment*, the Waybill is linked to a shipment. A shipment in
 
 ```http
 "https://onerecord.iata.org/Waybill#shipment": {
-    "@id": "http://1r.logistics-data.com/organizations/speed-airline/los/
+    "@id": "https://1r.example.com/logistics-objects/los/
     	6fd367f1fdaf4ce9b69e956340c200a8?embedded=true",
     "@type": [
     "https://onerecord.iata.org/Shipment",
@@ -266,7 +266,7 @@ Here, the piece has volume, dimensions and special handling codes (GEN, SPX and 
 ```http
 "https://onerecord.iata.org/Shipment#containedPieces": [
     {
-   "@id": "http://1r.logistics-data.com/organizations/speed-airline/
+   "@id": "https://1r.example.com/logistics-objects/
    		los/d94de4ba?embedded=true",
     "@type": [
         "https://onerecord.iata.org/Piece",
@@ -321,7 +321,7 @@ The linked TransportMovement only contains origin and destination of the leg:
 ```http
 "https://onerecord.iata.org/Piece#transportMovements": [
  	{
- 	"@id": "http://1r.logistics-data.com/organizations/speed-airline/los/
+ 	"@id": "https://1r.example.com/logistics-objects/los/
  		170fcd042a894b16b8d85d14916b7619?embedded=true",
 	"@type": [
 		"https://onerecord.iata.org/TransportMovement",
@@ -347,7 +347,7 @@ Like any other objects, events have links and are linked, and thus are used in t
 ```http
 "https://onerecord.iata.org/LogisticsObject#events": [
 {
-	"@id": "http://1r.logistics-data.com/organizations/speed-airline/los/
+	"@id": "https://1r.example.com/logistics-objects/los/
 		/070bfcc011194fb2b54d181067e875e7",
 	"@type": ["https://onerecord.iata.org/Event"],
 	"https://onerecord.iata.org/Event#eventName": "Consignment manifested on a specific flight",
@@ -359,7 +359,7 @@ Like any other objects, events have links and are linked, and thus are used in t
 	"https://onerecord.iata.org/Event#eventCode": "MAN",
 	"https://onerecord.iata.org/Event#eventTypeIndicator": "actual",
 	"https://onerecord.iata.org/Event#linkedObject": {
-		"@id": "http://1r.logistics-data.com/organizations/speed-airline/los/
+		"@id": "https://1r.example.com/logistics-objects/los/
 			170fcd042a894b16b8d85d14916b7619?embedded=true",
 		"@type": [
 			"https://onerecord.iata.org/TransportMovement",
@@ -378,7 +378,7 @@ Like any other objects, events have links and are linked, and thus are used in t
 
 ```http
 {
-	"@id": "http://1r.logistics-data.com/organizations/speed-airline/los/
+	"@id": "https://1r.example.com/logistics-objects/los/
 		070bfcc011fsa4fb2b54d181067e875e7",
 	"@type": ["https://onerecord.iata.org/Event"],
 	"https://onerecord.iata.org/Event#eventName": "Consignment received from a given flight",
@@ -390,7 +390,7 @@ Like any other objects, events have links and are linked, and thus are used in t
 	"https://onerecord.iata.org/Event#eventCode": "RCF",
 	"https://onerecord.iata.org/Event#eventTypeIndicator": "Scheduled",
 	"https://onerecord.iata.org/Event#linkedObject": {
-		"@id": "http://1r.logistics-data.com/organizations/speed-airline/los/
+		"@id": "https://1r.example.com/logistics-objects/los/
 			d94de4ba?embedded=true",
 		"@type": [
 			"https://onerecord.iata.org/Piece",
