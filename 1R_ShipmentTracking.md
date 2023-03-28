@@ -403,7 +403,7 @@ Like any other objects, events have links and are linked, and thus are used in t
 	}
 ```
 
-## Special Case: Multi-Carrier tracking platform
+## Special Case: Multi-Carrier tracking platform in a heterogenous environment
 
 The mechanis as described above reflects the requirements of a single carrier or forwarder platform providing tracking data for themselfes or other stakeholders that are not using ONE Record. Beyond that, there is a scenario where a tracking platform might want to offer a unified tracking mechanism in a hetereogenous ONE Record / non ONE Record environment. All is covered by the mechanis as descibed above, except for the case the platform gets a call for an AWB number for a carrier that is providing data in ONE Record. 
 
