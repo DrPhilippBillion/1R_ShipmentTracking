@@ -147,43 +147,48 @@ As an assumption, all data is provided by a single data owner in the following e
 
 ## Request design
 
-The basic structure of ONE Record URIs is as follows:
+The basic structure of ONE Record URIs is quite open. Examples can be found in the current API specification draft (https://ddoeppner.github.io/ONE-Record/).
 
-Link to the LO: 
+Examples of a basic URI for an LO: 
 
 ```http
-{AUTHORITY}/organizations/{organizationID}/los/{loID}
+https://1r.example.com/logistics-objects/flights/LH870/2023-11-20
 ```
 
-Link to all events connected with the LO: 
+or
 
 ```http
-{AUTHORITY}/organizations/{organizationID}/los/{loID}/events
+https://1r.example.com/logistics-objects/1a8ded38-1804-467c-a369-81a411416b7c
 ```
 
-Link to a specific event connected with the 
+Example of a URI for all events connected with the LO: 
 
 ```http
-LO: {AUTHORITY}/organizations/{organizationID}/los/{loID}/events/{eventID}
+https://1r.example.com/logistics-objects/1a8ded38-1804-467c-a369-81a411416b7c/events
 ```
 
-Many parties prefer tokenized loIDs like
+Example of a URI for a specific events connected with the LO: 
 
 ```http
-http://1r.logistics-data.com/organizations/speed-airline/los/a92eo
+https://1r.example.com/logistics-objects/1a8ded38-1804-467c-a369-81a411416b7c/events/f2512fd
 ```
 
-instead of class names or related information like
-
+The URI can either be tokenized like
 
 ```http
-http://1r.logistics-data.com/organizations/speed-airline/los/transportMeans/D-ALFA
+https://1r.example.com/logistics-objects/1a8ded38-1804-467c-a369-81a411416b7c/events
+```
+
+or using class names like
+
+```http
+https://1r.example.com/logistics-objects/transportMeans/D-ALFA
 
 ```
 
 as a basic structure. 
 
-In this case, the URI is structured with the following components:
+For our use case, the URI is structured with the following components:
 
 |  Component | Explanation  | Example  | Example explanation   |
 |---|:-:|:-:|---|
