@@ -445,10 +445,10 @@ On the data consumer side, even less functions are required for pure data consum
 - Retrieving data from linked data sources 
  
 
-## Authentication approach
+# Authentication approach
 
 For this use case, the authentication approach and implementation is left over to the implementing party. As of the nature of the "open" tracking API, authentication might not be required at all.
 
-## Effective date
+# Effective date
 
 The effective date of the commitment for implementing this Open Tracking API is to be defined.
